@@ -1,198 +1,131 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb 27 16:11:59 2023
-
-@author: rouab
-"""
-print("test with branch")
 
 
-# -*- coding: utf-8 -*-
-"""
-RISK MAPS
-@author: Miia Chabot
-"""
-import seaborn as sns
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+"!pip install numpy_financial"
 
 
-#HEATMAP, Exercise 1.-------------------------------------------------------------
-# Create a dataset
-df = pd.DataFrame(np.random.random((5,5)), columns=["a","b","c","d","e"])
-# numpy.random.random() is one of the function for doing random sampling in numpy. 
-#It returns an array of specified shape and fills it with random floats in the half-open interval [0.0, 1.0).
+
+# ---------------------------------------FONCTION NPV-------------------------
 
 
-# Default heatmap            ------- plot first heatmap
-p1 = sns.heatmap(df)
+def calculate_npv(rate, cashflows):
+    npv = 0.0
+    for i in range(len(cashflows)):
+        npv += cashflows[i] / (1 + WACC) ** i
+    return npv
+
+# Entrées de l'utilisateur
+
+initial_investment = float(input("Entrez le montant de l'investissement initial : "))
+WACC = float(input("Entrez le taux d'actualisation : "))
+cashflows = []
+num_cashflows = int(input("Entrez le nombre de flux de trésorerie futurs : "))
+for i in range(num_cashflows):
+    cashflow = float(input("Entrez le flux de trésorerie futur pour l'année " + str(i+1) + " : "))
+    cashflows.append(cashflow)
+
+# Calcul du NPV
+cashflows.insert(0, -initial_investment)
+npv = calculate_npv(WACC, cashflows)
+
+# Affichage du résultat
+print("La valeur actuelle nette est : " + str(npv))
+# IRR Calculation based on CF (given)
+import numpy_financial as npf
 
 
-#Exercise2-----------------------------------Measuring Correlations-------------------
-# Create a dataset
-df = pd.DataFrame(np.random.random((100,5)), columns=["a","b","c","d","e"])
- 
-# Calculate correlation between each pair of variable
-corr_matrix=df.corr()            # gives me matrix 5/5
- 
-# plot it
-sns.heatmap(corr_matrix, cmap='PuOr')
-# cmap='PuOr' : for color option
-#Change it 
-# https://matplotlib.org/stable/gallery/color/colormap_reference.html
-sns.heatmap(corr_matrix, cmap='seismic')
-
-
-#Exercise 3.----------------------------------------------------------------------
-#HALF CORRELATION MATRIX
-import seaborn as sns
-import pandas as pd
-import numpy as np
-np.random.seed(0)
- 
-# Create a dataset
-df = pd.DataFrame(np.random.random((100,5)), columns=["a","b","c","d","e"])
-
-# Calculate correlation between each pair of variable
-corr_matrix=df.corr()
- 
-# Can be great to plot only a half matrix
-# Generate a mask for the upper triangle
-mask = np.zeros_like(corr_matrix)
-mask[np.triu_indices_from(mask)] = True
-
-# Draw the heatmap with the mask
-sns.heatmap(corr_matrix, mask=mask, square=True, cmap='rainbow')
-
-
-#Exercise 4.---------------------------------------------------------------------
- 
-# Create a dataset
-df = pd.DataFrame(np.random.random((10,10)), columns=["a","b","c","d","e","f","g","h","i","j"])
-
-# plot a heatmap with annotation
-sns.heatmap(df, cmap='rainbow', annot=True, annot_kws={"size": 7})
-
-#Exercise 5--------------------------------------------------------------------------
-
-import matplotlib.pyplot as plt
-
-column_labels = list('ABC')
-row_labels = list('WXYZ')
-data = np.array([[1, 2, 3], [0, 3, 2], [1, 2, 3], [4, 3, 2]]) 
-fig, axis = plt.subplots() 
-heatmap = axis.pcolor(data, cmap=plt.cm.Greens)
-plt.savefig('test.png')
-plt.show() 
-
-#Exercise 6 -------------------------------------------real case study------------
-column_labels = list('ABC') 
-row_labels = list('WXYZ')
-data = np.array([[1, 2, 3], [0, 3, 2], [1, 2, 3], [4, 3, 2]])
-fig, axis = plt.subplots() 
-heatmap = axis.pcolor(data, cmap='rainbow') 
-plt.savefig('test.png')
-plt.show() 
-
-#Real-case Study: your first RISK MAP------------------------------------------
-#Step 1--------------
-#Using Diverging colormaps and selecting red, yellow, green
-column_labels = list('ABC') 
-row_labels = list('WXY')
-data = np.array([[4, 4, 3], [4, 3, 2], [3, 2, 2]])
-fig, axis = plt.subplots() 
-#axis.axis("off")
-heatmap = axis.pcolor(data, cmap='RdYlGn') 
-plt.savefig('test.png')
-plt.show() 
-
-#Making it bigger
-data = np.array([[4, 4, 2,1], [4, 2, 1,2], [2,1, 2,0], [1, 2, 0,0]])
-fig, axis = plt.subplots()
-#axis.axis("off")
-heatmap = axis.pcolor(data, cmap='RdYlGn') 
-plt.savefig('test.png')
-plt.show() 
-
-#choosing different colormaps
-data = np.array([[4, 4, 2,1], [4, 2, 1,2], [2,1, 2,0], [1, 2, 0,0]])
-fig, axis = plt.subplots()
-axis.axis("off")
-heatmap = axis.pcolor(data, cmap='coolwarm') 
-plt.savefig('test.png')
-plt.show() 
-
-#Purple_Green
-data = np.array([[4, 4, 2,1], [4, 2, 1,2], [2,1, 2,0], [1, 2, 0,0]])
-fig, axis = plt.subplots()
-axis.axis("off")
-heatmap = axis.pcolor(data, cmap='PRGn') 
-plt.savefig('test.png')
-plt.show() 
-
-#STep 2, the scatterplot--------------------------------
-
-y = [0.2, 0.4,0.4,2.5,1.5,1.4,1.9,0.95,1,1.3,1.6,1.92,2.7,0.5,1.6,1.8,2.2,2.7,2.5,2.3]
-x = [0.9, 0.9,2.7,0.2,0.1,0.3,0.85,1.3,1.8,1.82,1.5,1.82,1.98,2.3,2.6,2.3,2.7,2.1,0.7,0.9]
-n = [12,8,14,20,11,19,7,13,17,5,4,15,6,18,10,3,16,2,1,9]
-
-fig, ax = plt.subplots()
-ax.scatter(x, y)
-
-for i, txt in enumerate(n):
-    ax.annotate(txt, (x[i], y[i]))
+def calculate_irr(cashflows):
+    positive_cf = [cf for cf in cashflows if cf > 0]
+    negative_cf = [cf for cf in cashflows if cf < 0]
     
-# 3x3 RISK MAP: FINAL STEP------------------------------------------------------------  
-# Insert your scatterplot in your map
-
-#The map
-data = np.array([[4, 4, 3], [4, 3, 2], [3, 2, 2]])
-axis.hlines([1, 2, 3], *axis.get_xlim())
-axis.vlines([1, 2, 3], *axis.get_xlim())
-
-# The scatterplot (do not place your dots on the grid)
-y = [0.2, 0.4,0.4,2.5,1.5,1.4,1.8,0.8,1.1,1.4,1.6,1.8,2.7,0.5,1.6,1.8,2.2,2.7,2.5,2.3]
-x = [0.9, 0.9,2.7,0.2,0.1,0.3,0.8,1.3,1.8,1.82,1.5,1.82,1.9,2.3,2.6,2.3,2.7,2.1,0.7,0.85]
-n = [12,8,14,20,11,19,7,13,17,5,4,15,6,18,10,3,16,2,1,9]
-
-fig, axis = plt.subplots()
-#axis.axis("off")
-heatmap = axis.pcolor(data, cmap='RdYlGn') 
-axis.scatter(x, y, c="grey", alpha=0.5 )
-axis.hlines([1, 2, 3], *axis.get_xlim(), linestyles ='dotted',lw=1.5, color='grey')
-axis.vlines([1, 2, 3], *axis.get_xlim(),linestyles ='dotted',lw=1.5, color='grey')
-
-plt.title("Risk Map",size=12, fontname="Calibri")
-plt.xlabel("Severity", size=10, fontname="Calibri")
-plt.ylabel("Frequency", size=10, fontname="Calibri")
-
-for i, txt in enumerate(n):
-      axis.annotate(txt, (x[i], y[i]),xytext=(x[i]+0.03, y[i]+0.04))
-
-plt.savefig('test.png')
-plt.show() 
-
-#Using Your own Excel-----------------------------------------------------------------
-
-df = pd.read_excel("C:/Users/Miia CHABOT/Desktop/Data/Data_Heatmap.xlsx")
-data = np.array([[4, 4, 3], [4, 3, 2], [3, 2, 2]])
-n = df['N'].to_list()
-x = df['X'].to_list()
-y = df['Y'].to_list()
-
-fig, axis = plt.subplots()
-axis.axis("off")
-heatmap = axis.pcolor(data, cmap='RdYlGn')
-axis.vlines([1, 2, 3], *axis.get_xlim(), linestyles ='dotted', lw=1.5, color ='grey')
-axis.hlines([1, 2, 3], *axis.get_xlim(), linestyles ='dotted', lw=1.5, color ='grey')
-axis.scatter(x, y, c='grey',alpha=0.5)
-
-for i, txt in enumerate(n):
-    axis.annotate(txt, (x[i], y[i]),xytext =(x[i]+0.03, y[i]+0.04))
-
-plt.savefig('test.png')
-plt.show() 
+    if len(negative_cf) == len(cashflows):
+        return None  # Aucun taux de rendement interne n'existe pour un investissement sans rentrées de trésorerie.
     
-# end file
-# end end
+    guess = 0.1  # valeur initiale supposée pour le taux de rendement interne
+    npv = npf.npv(guess, cashflows)
+    while npv > 0:
+        guess += 0.01
+        npv = npf.npv(guess, cashflows)
+    return round(guess, 2)
+
+# Entrées de l'utilisateur
+initial_investment = float(input("Entrez le montant de l'investissement initial : "))
+cashflows = []
+num_cashflows = int(input("Entrez le nombre de flux de trésorerie futurs : "))
+for i in range(num_cashflows):
+    cashflow = float(input("Entrez le flux de trésorerie futur pour l'année " + str(i+1) + " : "))
+    cashflows.append(cashflow)
+
+# Calcul de l'IRR
+cashflows.insert(0, -initial_investment)
+irr = calculate_irr(cashflows)
+
+# Affichage du résultat
+if irr:
+    print("Le taux de rendement interne est : " + str(irr*100) + "%")
+else:
+    print("Aucun taux de rendement interne n'existe pour cet investissement.") 
+    
+    
+# Then we compute the WACC (weighted average cost of capital) by simple calculation of the cost of debt and the cost of equity 
+
+
+# Fonction pour calculer le coût des capitaux propres
+def calculate_cost_equity(rf, beta, rm):
+    return rf + beta * (rm - rf)
+
+# Fonction pour calculer le coût de la dette
+def calculate_cost_debt(interest_rate, tax_rate):
+    return interest_rate * (1 - tax_rate)
+
+# Fonction pour calculer le WACC
+def calculate_wacc(weights, costs):
+    wacc = 0.0
+    for i in range(len(weights)):
+        wacc += weights[i] * costs[i]
+    return wacc
+
+# Entrées de l'utilisateur
+rf = float(input("Entrez le taux d'intérêt sans risque (rf) : "))
+rm = float(input("Entrez le taux de rendement exigé du marché (rm) : "))
+beta = float(input("Entrez le bêta de l'entreprise : "))
+interest_rate = float(input("Entrez le taux d'intérêt de la dette : "))
+tax_rate = float(input("Entrez le taux d'imposition : "))
+equity_weight = float(input("Entrez le pourcentage de poids des capitaux propres dans la structure du capital (en %) : ")) / 100
+debt_weight = 1 - equity_weight
+
+# Calcul du WACC
+cost_equity = calculate_cost_equity(rf, beta, rm)
+cost_debt = calculate_cost_debt(interest_rate, tax_rate)
+weights = [equity_weight, debt_weight]
+costs = [cost_equity, cost_debt]
+wacc = calculate_wacc(weights, costs)
+
+# Affichage du résultat
+print("Le WACC est : " + str(round(wacc*100, 2)) + "%")
+
+#-----------------------------FONCTION IRR and WACC------------------------------
+
+
+# Here we would like to know if the IRR Internal Rate of Return is greater than the WACC, if so then the inverstment is profitable. 
+"!Pip numpy_financial"
+
+import numpy_financial as npf
+
+# demander à l'utilisateur d'entrer les flux de trésorerie, séparés par des virgules
+cash_flows = input("Entrez les flux de trésorerie, séparés par des virgules: ")
+
+# convertir les flux de trésorerie en une liste d'entiers
+cash_flows = [int(x) for x in cash_flows.split(',')]
+
+# calcul de l'IRR à l'aide de la fonction np.irr()
+irr = npf.irr(cash_flows)
+2
+# demander à l'utilisateur d'entrer le WACC
+wacc = float(input("Entrez le WACC: "))
+
+# vérifier si l'IRR est supérieur au WACC
+if irr > wacc:
+    print("L'investissement est rentable car l'IRR est supérieur au WACC.")
+else:
+    print("L'investissement n'est pas rentable car l'IRR est inférieur ou égal au WACC.")
